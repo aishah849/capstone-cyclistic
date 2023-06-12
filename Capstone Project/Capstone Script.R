@@ -365,12 +365,6 @@ all_trips %>% group_by(day_of_week, user_type,) %>%
   summarise_at(vars(ride_length),
                list(time = mean))
 
-# See the average ride time by each day for members vs casual users
-aggregate(all_trips$ride_length ~ all_trips$user_type + all_trips$day_of_week,
-          FUN = mean)
-counts <- aggregate(all_trips$ride_length ~ all_trips$user_type + all_trips$day_of_week,
-                    FUN = mean)
-
 #-----------------DAY OF THE MONTH------------------
 #average ride_length
 all_trips %>% group_by(day) %>% 
@@ -394,7 +388,7 @@ all_trips %>% group_by(month) %>%
 all_trips %>% group_by(month, user_type) %>% 
   summarise_at(vars(ride_length),
                list(time = mean)) %>% 
-  print(n=24)  
+  print(n=24)
 
 #----------------------SEASON-------------------------
 #-----spring------
@@ -466,11 +460,41 @@ all_trips %>%
   summarise_at(vars(ride_length),
                list(time = mean))
 
-# analyze ridership data by type and weekday
-all_trips %>%
+#analyze ridership data by type hourly
+avgRideLength_hour <-
+  all_trips %>%
+  group_by(user_type, hour) %>%
+  summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>%
+  arrange(hour, user_type)
+
+#analyze ridership data by type and time of day
+avgRideLength_timeOfDay <-
+  all_trips %>%
+  group_by(user_type, time_of_day) %>%
+  summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>%
+  arrange(time_of_day, user_type)
+
+#analyze ridership data by type and weekday
+avgRideLength_dayOfWeek <-
+  all_trips %>%
   group_by(user_type, day_of_week) %>%
   summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>%
-  arrange(user_type, day_of_week)
+  arrange(day_of_week,user_type)
+
+
+#analyze ridership data by type monthly
+avgRideLength_month <-
+  all_trips %>%
+  group_by(user_type, month) %>%
+  summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>%
+  arrange(month, user_type)
+
+#analyze ridership data by type and season
+avgRideLength_season <-
+  all_trips %>%
+  group_by(user_type, season) %>%
+  summarise(number_of_rides = n(), average_duration = mean(ride_length)) %>%
+  arrange(season, user_type)
 
 #visualize the number of rides by rider type
 all_trips %>%
@@ -489,3 +513,11 @@ all_trips %>%
   arrange(user_type, day_of_week) %>%
   ggplot(aes(x = day_of_week, y = average_duration, fill = user_type)) +
   geom_col(position = "dodge")
+
+#export dataframes
+write_csv(all_trips,"cyclistic_12months.csv")
+write_csv(avgRideLength_dayOfWeek,"cyclistic_dayOfWeek.csv")
+write_csv(avgRideLength_hour,"cyclistic_hourly.csv")
+write_csv(avgRideLength_timeOfDay,"cyclistic_timeOfDay.csv")
+write_csv(avgRideLength_month,"cyclistic_monthly.csv")
+write_csv(avgRideLength_season,"cyclistic_seasons.csv")
