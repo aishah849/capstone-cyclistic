@@ -1,3 +1,6 @@
+library(tidyverse)
+library(lubridate)
+
 #load .csv files, a years worth of data from April 2022 to March 2023
 apr_2022 <- read_csv("~/Desktop/Capstone/Dataset/Copy/202204-divvy-tripdata.csv")
 may_2022 <- read_csv("~/Desktop/Capstone/Dataset/Copy/202205-divvy-tripdata.csv")
@@ -32,7 +35,7 @@ all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
 #data cleaning
 all_trips <- na.omit(all_trips) #remove rows with NA values
 all_trips <- distinct(all_trips) #remove duplicate rows
-all_trips <- all_trips[!(all_trips$ride_length<=0),] #remove trip duration <=0
+all_trips <- all_trips[!(all_trips$ride_length<300),]#remove trip duration <300secs
 
 #create columns for: date, day of week, day, month, year, time, hour
 all_trips$date <- as.Date(all_trips$start_time) #created date column
