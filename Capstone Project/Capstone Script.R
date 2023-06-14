@@ -66,6 +66,9 @@ nrow(all_trips)
 all_trips %>%
   group_by(user_type) %>% 
   count(user_type)
+cyclistic_userType<-all_trips %>%
+  group_by(user_type) %>% 
+  count(user_type)
 
 #----------------TYPE OF BIKE---------------------
 #total rides 
@@ -256,6 +259,7 @@ print(cyclistic_avgRide)
 all_trips %>% group_by(user_type) %>% 
   summarise_at(vars(ride_length),
                list(time = mean))
+
 
 # Compare members and casual users
 aggregate(all_trips$ride_length ~ all_trips$user_type, FUN = mean)
@@ -462,6 +466,13 @@ all_trips %>%
   group_by(season, user_type) %>% 
   summarise_at(vars(ride_length),
                list(time = mean))
+#------------------------------------
+
+#average ride_length by usertype
+avgRideLength_userType <-
+  all_trips %>% group_by(user_type) %>% 
+  summarise_at(vars(ride_length),
+               list(time = mean))
 
 #analyze ridership data by type hourly
 avgRideLength_hour <-
@@ -519,8 +530,10 @@ all_trips %>%
 
 #export dataframes
 write_csv(all_trips,"cyclistic_12months.csv")
+write_csv(avgRideLength_userType,"cyclistic_avgRideLength.csv")
 write_csv(avgRideLength_dayOfWeek,"cyclistic_dayOfWeek.csv")
 write_csv(avgRideLength_hour,"cyclistic_hourly.csv")
 write_csv(avgRideLength_timeOfDay,"cyclistic_timeOfDay.csv")
 write_csv(avgRideLength_month,"cyclistic_monthly.csv")
 write_csv(avgRideLength_season,"cyclistic_seasons.csv")
+write_csv(cyclistic_userType,"cyclistic_userType.csv")
